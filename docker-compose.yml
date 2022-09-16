@@ -1,9 +1,7 @@
-
-
-version: '2.1'
+version: '3.7'
 services:
   wireguard:
-    image: lscr.io/linuxserver/wireguard:latest
+    image: linuxserver/wireguard
     container_name: wireguard
     cap_add:
       - NET_ADMIN
@@ -11,19 +9,18 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/London
-      - SERVERURL=wireguard.domain.com #optional
+      - TZ=Africa/Nairobi #set correct timezone
       - SERVERPORT=51820 #optional
       - PEERS=1 #optional
       - PEERDNS=auto #optional
-      - INTERNAL_SUBNET=10.13.13.0 #optional
-      - ALLOWEDIPS=0.0.0.0/0 #optional
-      - LOG_CONFS=true #optional
-    volumes:
-      - /path/to/appdata/config:/config
+      - ALLOWEDIPS=0.0.0.0/0 #Peer addresses allowed
+      - INTERNAL_SUBNET=10.13.13.0/24 #Subnet used in VPN tunnel
+     volumes:
+      - /opt/wireguard-server/config:/config
+      - /usr/src:/usr/src # location of kernel headers
       - /lib/modules:/lib/modules
     ports:
       - 51820:51820/udp
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
-    restart: unless-stopped
+    restart: always
